@@ -301,6 +301,19 @@ export default React.createClass({
     }, "", __("Enter File Name"), __("Create"));
   },
 
+  _on_key_down(e){
+    console.log(e);
+    var keyCode = e.keyCode || e.which || e.charCode;
+    var ctrlKey = e.ctrlKey || e.metaKey;
+    var altKey = e.altKey;
+    if(ctrlKey && (keyCode === 83)){    // 监听Ctrl + S事件，保存文本
+      console.log("save");
+      this._on_save();
+      e.preventDefault();
+      return false;
+    }
+  },
+
   componentWillMount() {
     $hope.app.stores.composer.layout();
   },
@@ -314,6 +327,8 @@ export default React.createClass({
     $hope.trigger_action("composer/list/files", {
       service_id: this.service_id
     });
+
+    document.addEventListener("keydown",this._on_key_down);
   },
 
   componentWillUnmount() {
@@ -321,6 +336,8 @@ export default React.createClass({
     $hope.app.stores.composer.removeListener("composer", this._on_composer_event);
     $hope.app.stores.spec.removeListener("spec", this._on_spec_event);
     $hope.app.stores.hub.removeListener("hub", this._on_hub_event);
+
+    document.removeEventListener("keydown",this._on_key_down);
   },
 
   render_file_list() {
